@@ -1,0 +1,91 @@
+services:
+  mosquitto:
+    image: sbd-mosquitto:latest
+    build:
+      context: ./mosquitto
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "1883:1883"
+      - "8883:8883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+    restart: unless-stopped
+    networks:
+      - red-ejemplo
+  node-red:
+    image: nodered/node-red:latest
+    ports:
+      - "1880:1880"
+    environment:
+      - TZ=Europe/Madrid
+    volumes:
+      - ./node-red/data:/data
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    networks:
+      - red-ejemplo
+  influxdb:
+    image: influxdb:2.7.12-alpine
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2
+      - ./influxdb/config:/etc/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=Alandalus2526
+      - DOCKER_INFLUXDB_INIT_ORG=sbd
+      - DOCKER_INFLUXDB_INIT_BUCKET=aula
+    restart: unless-stopped
+    depends_on:
+      - node-red
+    networks:
+      - red-ejemplo
+  coingecko-mqtt:
+    build:
+      context: coingecko-mqtt
+      dockerfile: Dockerfile
+    container_name: coingecko-mqtt
+    restart: unless-stopped
+    environment:
+      BROKER_HOST: mosquitto         
+      BROKER_PORT: 1883
+      MQTT_USERNAME: "admin"
+      MQTT_PASSWORD: "Alandalus2526"
+      MQTT_QOS: "0"
+      MQTT_RETAIN: "false"
+      COINS: "bitcoin,ethereum,solana"
+      FIAT: "eur"
+      INTERVAL_SECONDS: "30"
+      TOPIC_TEMPLATE: "coingecko/{symbol}"
+      SYMBOL_MAP: '{"bitcoin":"BTC","ethereum":"ETH","solana":"SOL"}'
+    networks:
+      - red-ejemplo
+    depends_on:
+      - mosquitto
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      - user=admin
+    volumes:
+      - './grafana:/var/lib/grafana'
+    networks:
+      - red-ejemplo
+    depends_on:
+      - influxdb
+
+networks:
+  red-ejemplo:
