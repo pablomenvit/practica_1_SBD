@@ -1,7 +1,6 @@
 # practica_1_SBD
 Repositoria de la practica 1: Pila MING
 
-```markdown
 # Pila MING (Mosquitto, Node-RED, InfluxDB, Grafana) - Ingesta de Criptomonedas
 
 Este repositorio contiene la configuración para desplegar una pila de observación/IoT ligera (MING) utilizando Docker Compose. El objetivo principal es la ingesta robusta del precio de Bitcoin (BTC) desde la API pública de CoinGecko, para su posterior visualización en un cuadro de mando en Grafana.
@@ -15,7 +14,7 @@ Asegúrese de tener Docker y Docker Compose instalados en su sistema.
 
 ### Comando de Arranque
 
-Para desplegar y levantar todos los servicios en modo *detached* (segundo plano), use el siguiente comando:
+Para desplegar y levantar todos los servicios en segundo plano, use el siguiente comando:
 
 ```bash
 docker compose up -d
@@ -113,5 +112,4 @@ Los datos se formatean siguiendo el esquema requerido para InfluxDB v2:
 ### Robustez Implementada
 El flujo cumple con la **Robustez mínima** solicitada:
 1. **Respeto por la cadencia:** La inyección inicial ocurre exactamente cada 10 minutos.
-2. **Manejo de Errores y Reintento:** En caso de fallo HTTP (código ≠ 200) en la petición a CoinGecko, se implementa una lógica de `Catch`, `Log` y `Delay` para reintentar la solicitud (mecanismo discutido previamente en la conversación) antes de declarar un fallo crítico.
-```
+2. **Manejo de Errores y Reintento:** En caso de fallo HTTP (código ≠ 200) en la petición a CoinGecko, se implementa una lógica de `Catch`, `Log` y `Delay` para reintentar la solicitud antes de declarar un fallo crítico.
