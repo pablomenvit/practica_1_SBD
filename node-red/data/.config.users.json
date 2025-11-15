@@ -47,7 +47,7 @@
                 }
             }
         },
-        "menu-menu-item-palette": true,
+        "menu-menu-item-palette": false,
         "debug": {
             "filter": "filterCurrent"
         },

@@ -1,35 +1,35 @@
+version: '3.8'
+
+# Definición de Docker Secrets
+secrets:
+  influx_admin_password_secret:
+    file: ${INFLUX_ADMIN_PASSWORD_FILE}
+  influx_write_token_secret:
+    file: ${INFLUX_WRITE_TOKEN_FILE}
+
 services:
-  mosquitto:
-    image: sbd-mosquitto:latest
-    build:
-      context: ./mosquitto
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    ports:
-      - "1883:1883"
-      - "8883:8883"
-      - "9001:9001"
-    volumes:
-      - ./mosquitto/config:/mosquitto/config
-      - ./mosquitto/data:/mosquitto/data
-      - ./mosquitto/log:/mosquitto/log
-    restart: unless-stopped
-    networks:
-      - red-ejemplo
+  # -------------------------------------------------------
+  # 1. NODE-RED
+  # -------------------------------------------------------
   node-red:
     image: nodered/node-red:latest
     ports:
       - "1880:1880"
     environment:
-      - TZ=Europe/Madrid
+      # Carga TZ desde .env
+      - TZ=${TZ}
     volumes:
       - ./node-red/data:/data
     restart: unless-stopped
-    depends_on:
-      - mosquitto
     networks:
-      - red-ejemplo
+      - red-practica1-sbd
+    secrets:
+      - influx_write_token_secret
+    # El token estará disponible en /run/secrets/influx_write_token_secret
+
+  # -------------------------------------------------------
+  # 2. INFLUXDB
+  # -------------------------------------------------------
   influxdb:
     image: influxdb:2.7.12-alpine
     container_name: influxdb
@@ -39,39 +39,24 @@ services:
       - ./influxdb/data:/var/lib/influxdb2
       - ./influxdb/config:/etc/influxdb2
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=Alandalus2526
-      - DOCKER_INFLUXDB_INIT_ORG=sbd
-      - DOCKER_INFLUXDB_INIT_BUCKET=aula
+      # Carga variables de configuración desde .env
+      - DOCKER_INFLUXDB_INIT_MODE=${DOCKER_INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
+      # Referencia al secreto para la contraseña de configuración inicial
+      - DOCKER_INFLUXDB_INIT_PASSWORD_FILE=/run/secrets/influx_admin_password_secret
     restart: unless-stopped
     depends_on:
       - node-red
     networks:
-      - red-ejemplo
-  coingecko-mqtt:
-    build:
-      context: coingecko-mqtt
-      dockerfile: Dockerfile
-    container_name: coingecko-mqtt
-    restart: unless-stopped
-    environment:
-      BROKER_HOST: mosquitto         
-      BROKER_PORT: 1883
-      MQTT_USERNAME: "admin"
-      MQTT_PASSWORD: "Alandalus2526"
-      MQTT_QOS: "0"
-      MQTT_RETAIN: "false"
-      COINS: "bitcoin,ethereum,solana"
-      FIAT: "eur"
-      INTERVAL_SECONDS: "30"
-      TOPIC_TEMPLATE: "coingecko/{symbol}"
-      SYMBOL_MAP: '{"bitcoin":"BTC","ethereum":"ETH","solana":"SOL"}'
-    networks:
-      - red-ejemplo
-    depends_on:
-      - mosquitto
+      - red-practica1-sbd
+    secrets:
+      - influx_admin_password_secret
 
+  # -------------------------------------------------------
+  # 3. GRAFANA
+  # -------------------------------------------------------
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
@@ -83,9 +68,9 @@ services:
     volumes:
       - './grafana:/var/lib/grafana'
     networks:
-      - red-ejemplo
+      - red-practica1-sbd
     depends_on:
       - influxdb
 
 networks:
-  red-ejemplo:
+  red-practica1-sbd:
