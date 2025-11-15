@@ -530,34 +530,10 @@
         "y": 340,
         "wires": [
             [
-                "2ac7f8fdd26ea9ca"
+                "590c1b7e66a16886"
             ],
             [
                 "ab0dc897536766f5"
-            ]
-        ]
-    },
-    {
-        "id": "2ac7f8fdd26ea9ca",
-        "type": "delay",
-        "z": "6995dee42367b91d",
-        "name": "Retardo 5s",
-        "pauseType": "delayv",
-        "timeout": "5",
-        "timeoutUnits": "seconds",
-        "rate": "1",
-        "nbRateUnits": "1",
-        "rateUnits": "second",
-        "randomFirst": "",
-        "randomLast": "",
-        "randomUnits": "seconds",
-        "allowrate": false,
-        "outputs": 1,
-        "x": 720,
-        "y": 340,
-        "wires": [
-            [
-                "3e6c2e79edacdd8c"
             ]
         ]
     },
@@ -604,6 +580,31 @@
         "wires": [
             [
                 "0d0f448fdebb9851"
+            ]
+        ]
+    },
+    {
+        "id": "590c1b7e66a16886",
+        "type": "delay",
+        "z": "6995dee42367b91d",
+        "name": "Retraso 5s",
+        "pauseType": "delayv",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 690,
+        "y": 340,
+        "wires": [
+            [
+                "3e6c2e79edacdd8c"
             ]
         ]
     }

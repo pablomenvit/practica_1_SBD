@@ -1,16 +1,8 @@
 [
     {
-        "id": "3f95a5882048ba0c",
-        "type": "tab",
-        "label": "Flujo 1",
-        "disabled": true,
-        "info": "",
-        "env": []
-    },
-    {
         "id": "6995dee42367b91d",
         "type": "tab",
-        "label": "Flujo 1 - BTC Ingesta Robusta",
+        "label": "Pila MING Criptomonedas",
         "disabled": false,
         "info": "",
         "env": []
@@ -184,163 +176,6 @@
         "icon": "dashboard"
     },
     {
-        "id": "a1c0f63062d13456",
-        "type": "inject",
-        "z": "3f95a5882048ba0c",
-        "name": "Cada 10 minutos",
-        "props": [
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "600",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "coingecko/BTC",
-        "x": 310,
-        "y": 380,
-        "wires": [
-            [
-                "c97ba0c7f644863a"
-            ]
-        ]
-    },
-    {
-        "id": "ab5c36f55a1cf52e",
-        "type": "function",
-        "z": "3f95a5882048ba0c",
-        "name": "Formatear para InfluxDB",
-        "func": "const price = Number(msg.payload.bitcoin.eur);\nconst change = Number(msg.payload.bitcoin.eur_24h_change);\n\nconst measurement = \"crypto_price\";\nconst symbol = \"BTC\";\nconst currency = \"EUR\";\n\n// Line protocol sin timestamp (Influx lo añade)\nconst line = `${measurement},symbol=${symbol},currency=${currency} price=${price},change_24h=${change}`;\n\nmsg.payload = line;\nreturn msg;",
-        "outputs": 1,
-        "timeout": "",
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 630,
-        "y": 520,
-        "wires": [
-            [
-                "59dd71bd8f019d95",
-                "f72daf0f5c232256"
-            ]
-        ]
-    },
-    {
-        "id": "59dd71bd8f019d95",
-        "type": "http request",
-        "z": "3f95a5882048ba0c",
-        "name": "Enviar a InfluxDB",
-        "method": "POST",
-        "ret": "txt",
-        "paytoqs": "ignore",
-        "url": "http://influxdb:8086/api/v2/write?org=sbd&bucket=coingecko&precision=s",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [
-            {
-                "keyType": "Authorization",
-                "keyValue": "",
-                "valueType": "other",
-                "valueValue": "Token E26MZMrIxjVdASs6YCPutZ_ps5sM_XQkoyFbxGi2x_qW8ZPTMth-nkb5CNJ_xlvXvMTjhNo_JJqfpPz5rEhr9g=="
-            },
-            {
-                "keyType": "Content-Type",
-                "keyValue": "",
-                "valueType": "other",
-                "valueValue": "text/plain"
-            }
-        ],
-        "x": 950,
-        "y": 180,
-        "wires": [
-            [
-                "394b53c6bd4323cb"
-            ]
-        ]
-    },
-    {
-        "id": "394b53c6bd4323cb",
-        "type": "debug",
-        "z": "3f95a5882048ba0c",
-        "name": "Respuesta InfluxDB",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1180,
-        "y": 320,
-        "wires": []
-    },
-    {
-        "id": "f72daf0f5c232256",
-        "type": "debug",
-        "z": "3f95a5882048ba0c",
-        "name": "Formateo generado",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 950,
-        "y": 580,
-        "wires": []
-    },
-    {
-        "id": "c97ba0c7f644863a",
-        "type": "http request",
-        "z": "3f95a5882048ba0c",
-        "name": "Solicitud CoinGecko",
-        "method": "GET",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd,eur&include_24hr_change=true",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "insecureHTTPParser": false,
-        "authType": "",
-        "senderr": false,
-        "headers": [],
-        "x": 620,
-        "y": 280,
-        "wires": [
-            [
-                "ab5c36f55a1cf52e"
-            ]
-        ]
-    },
-    {
-        "id": "0fbd561523833237",
-        "type": "catch",
-        "z": "3f95a5882048ba0c",
-        "name": "Captura errores",
-        "scope": [
-            "c97ba0c7f644863a"
-        ],
-        "uncaught": false,
-        "x": 640,
-        "y": 180,
-        "wires": [
-            [
-                "ab5c36f55a1cf52e"
-            ]
-        ]
-    },
-    {
         "id": "446e406b778a9b4f",
         "type": "inject",
         "z": "6995dee42367b91d",
@@ -404,7 +239,7 @@
                 "keyType": "Authorization",
                 "keyValue": "",
                 "valueType": "other",
-                "valueValue": "Token E26MZMrIxjVdASs6YCPutZ_ps5sM_XQkoyFbxGi2x_qW8ZPTMth-nkb5CNJ_xlvXvMTjhNo_JJqfpPz5rEhr9g=="
+                "valueValue": "Token ${INFLUX_WRITE_TOKEN}"
             },
             {
                 "keyType": "Content-Type",
