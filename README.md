@@ -1,6 +1,3 @@
-# practica_1_SBD
-Repositoria de la practica 1: Pila MING
-
 # Pila MING (Mosquitto, Node-RED, InfluxDB, Grafana) - Ingesta de Criptomonedas
 
 Este repositorio contiene la configuración para desplegar una pila de observación/IoT ligera (MING) utilizando Docker Compose. El objetivo principal es la ingesta robusta del precio de Bitcoin (BTC) desde la API pública de CoinGecko, para su posterior visualización en un cuadro de mando en Grafana.
