@@ -7,7 +7,7 @@ Este repositorio contiene la configuración para desplegar una pila de observaci
 
 ## 1. Despliegue del Stack
 
-El stack está diseñado para ser levantado utilizando Docker Compose, con una red interna (`red-ejemplo`) y volúmenes persistentes para asegurar que los datos de InfluxDB, Grafana, Mosquitto y Node-RED se conserven entre reinicios.
+El stack está diseñado para ser levantado utilizando Docker Compose, con una red interna (`red-practica1-sbd`) y volúmenes persistentes para asegurar que los datos de InfluxDB, Grafana, Mosquitto y Node-RED se conserven entre reinicios.
 
 ### Requisitos
 Asegúrese de tener Docker y Docker Compose instalados en su sistema.
@@ -24,11 +24,10 @@ docker compose up -d
 
 | Servicio | Imagen Base | Puerto Expuesto (Host) | Red Interna | Dependencias |
 | :--- | :--- | :--- | :--- | :--- |
-| **mosquitto** | `sbd-mosquitto:latest` | 1883, 8883, 9001 | `red-ejemplo` | N/A |
-| **node-red** | `nodered/node-red:latest` | 1880 | `red-ejemplo` | `mosquitto` |
-| **influxdb** | `influxdb:2.7.12-alpine` | 8086 | `red-ejemplo` | `node-red` |
-| **coingecko-mqtt** | (Build local) | N/A | `red-ejemplo` | `mosquitto` |
-| **grafana** | `grafana/grafana:latest` | 3000 | `red-ejemplo` | `influxdb` |
+| **mosquitto** | `sbd-mosquitto:latest` | 1883, 8883, 9001 | `red-practica1-sbd` | N/A |
+| **node-red** | `nodered/node-red:latest` | 1880 | `red-practica1-sbd` | `mosquitto` |
+| **influxdb** | `influxdb:2.7.12-alpine` | 8086 | `red-practica1-sbd` | `node-red` |
+| **grafana** | `grafana/grafana:latest` | 3000 | `red-practica1-sbd` | `influxdb` |
 
 ---
 
@@ -50,7 +49,7 @@ El *stack* está configurado para inicializar InfluxDB v2 utilizando el modo `se
 | Parámetro | Valor | Fuente |
 | :--- | :--- | :--- |
 | **Organización (ORG)** | `sbd` | `DOCKER_INFLUXDB_INIT_ORG` |
-| **Bucket Inicial** | `aula` | `DOCKER_INFLUXDB_INIT_BUCKET` |
+| **Bucket Inicial** | `coingecko` | `DOCKER_INFLUXDB_INIT_BUCKET` |
 | **Token de Autorización** | `E26MZMrIxjVdASs6YCPutZ_ps5sM_XQkoyFbxGi2x_qW8ZPTMth-nkb5CNJ_xlvXvMTjhNo_JJqfpPz5rEhr9g==` | Usado en el nodo HTTP Request de Node-RED |
 
 ---
@@ -65,29 +64,8 @@ El *stack* está configurado para inicializar InfluxDB v2 utilizando el modo `se
 | `DOCKER_INFLUXDB_INIT_USERNAME` | Usuario inicial | `admin` | |
 | `DOCKER_INFLUXDB_INIT_PASSWORD` | Contraseña inicial | `Alandalus2526` | |
 | `DOCKER_INFLUXDB_INIT_ORG` | Organización | `sbd` | |
-| `DOCKER_INFLUXDB_INIT_BUCKET` | Bucket inicial | `aula` | |
+| `DOCKER_INFLUXDB_INIT_BUCKET` | Bucket inicial | `coingecko` | |
 
-### Variables de Node-RED
-
-| Variable | Descripción | Valor | Fuente |
-| :--- | :--- | :--- | :--- |
-| `TZ` | Zona horaria | `Europe/Madrid` | |
-
-### Variables de `coingecko-mqtt` (Servicio Adicional)
-
-Este servicio ingesta datos de criptomonedas y los publica en Mosquitto.
-
-| Variable | Descripción | Valor | Fuente |
-| :--- | :--- | :--- | :--- |
-| `BROKER_HOST` | Host MQTT | `mosquitto` | |
-| `BROKER_PORT` | Puerto MQTT | `1883` | |
-| `MQTT_USERNAME` | Usuario de conexión MQTT | `admin` | |
-| `MQTT_PASSWORD` | Contraseña de conexión MQTT | `Alandalus2526` | |
-| `COINS` | Monedas solicitadas | `bitcoin,ethereum,solana` | |
-| `INTERVAL_SECONDS` | Cadencia de ingesta MQTT | `30` | |
-| `TOPIC_TEMPLATE` | Tema MQTT | `coingecko/{symbol}` | |
-
----
 
 ## 4. Flujo de Ingesta (Node-RED)
 
