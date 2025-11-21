@@ -4,7 +4,7 @@ Este repositorio contiene la configuración para desplegar una pila de observaci
 
 ## 1. Despliegue del Stack
 
-El stack está diseñado para ser levantado utilizando Docker Compose, con una red interna (`red-practica1-sbd`) y volúmenes persistentes para asegurar que los datos de InfluxDB, Grafana, Mosquitto y Node-RED se conserven entre reinicios.
+El stack está diseñado para ser levantado utilizando Docker Compose, con una red interna (`red-practica1-sbd`) y volúmenes persistentes para asegurar que los datos de InfluxDB, Grafana y Node-RED se conserven entre reinicios.
 
 ### Requisitos
 Asegúrese de tener Docker y Docker Compose instalados en su sistema.
@@ -36,8 +36,7 @@ Los siguientes *endpoints* están disponibles en su máquina *host* (asumiendo `
 | :--- | :--- | :--- | :--- |
 | **Node-RED** | `http://localhost:1880` | N/A | N/A |
 | **InfluxDB** | `http://localhost:8086` | **`admin`** | **`Alandalus2526`** |
-| **Grafana** | `http://localhost:3000` | **`admin`** | (No especificada, usualmente `admin` o se configura al inicio) |
-| **Mosquitto** | (Acceso MQTT) | **`admin`** | **`Alandalus2526`** |
+| **Grafana** | `http://localhost:3000` | **`admin`** | **`Alandalus2526`** |
 
 ### Configuración de InfluxDB y Tokens
 
