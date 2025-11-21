@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Definición de Docker Secrets
 secrets:
   influx_admin_password_secret:
@@ -16,8 +14,7 @@ services:
     ports:
       - "1880:1880"
     environment:
-      # Carga TZ desde .env
-      - TZ=${TZ}
+      - TZ=Europe/Madrid
     volumes:
       - ./node-red/data:/data
     restart: unless-stopped
@@ -44,7 +41,7 @@ services:
       - DOCKER_INFLUXDB_INIT_USERNAME=${DOCKER_INFLUXDB_INIT_USERNAME}
       - DOCKER_INFLUXDB_INIT_ORG=${DOCKER_INFLUXDB_INIT_ORG}
       - DOCKER_INFLUXDB_INIT_BUCKET=${DOCKER_INFLUXDB_INIT_BUCKET}
-      # Referencia al secreto para la contraseña de configuración inicial
+      # Referencia al secret para la contraseña de configuración inicial
       - DOCKER_INFLUXDB_INIT_PASSWORD_FILE=/run/secrets/influx_admin_password_secret
     restart: unless-stopped
     depends_on:
